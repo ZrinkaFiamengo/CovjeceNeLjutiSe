@@ -1,0 +1,22 @@
+﻿<Window x:Class="CovjeceNeLjutiSe.UnosBox"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="UnosBox" Height="120" Width="220" WindowStartupLocation="CenterScreen" Background="LightGoldenrodYellow">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="70"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" Margin="5px">IP adresa:</Label>
+        <TextBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" x:Name="IP_Adresa" Margin="5px"></TextBox>
+
+        <Button Grid.Row="1" Grid.Column="1" Content="OK" Width="50" Height="25" HorizontalAlignment="Right" Margin="5" Background="Wheat" Click="OK_Click"></Button>
+    </Grid>
+
+</Window>

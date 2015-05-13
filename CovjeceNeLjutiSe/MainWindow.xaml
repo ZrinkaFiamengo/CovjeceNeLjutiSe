@@ -1,0 +1,235 @@
+﻿<Window x:Class="CovjeceNeLjutiSe.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:CovjeceNeLjutiSe.Controls"
+        Title="Čovječe ne ljuti se" Height="670" Width="650"  Background="LightGoldenrodYellow" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <Style TargetType="controls:field">
+            <Setter Property="Margin" Value="1"></Setter>
+        </Style>
+    </Window.Resources>
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+    <StackPanel>
+            <Menu Width="Auto" Height="20">
+                <MenuItem Width="Auto" Height="Auto" Header="Nova Igra">
+                    <MenuItem Width="Auto" Height="Auto" Header="Lokalna Igra" Click="NovaIgra_Click"></MenuItem>
+                    <MenuItem Width="Auto" Height="Auto" Header="Mrežna Igra">
+                        <MenuItem Width="Auto" Height="Auto" Header="Server" Click="MreznaIgraServer_Click"></MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Klijent" Click="MreznaIgraKlijent_Click"></MenuItem>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Width="Auto" Height="Auto" Header="Postavi Igrače">
+                    <MenuItem x:Name="Menu_Boja_1" Width="Auto" Height="Auto" Header="Plavi" IsCheckable="True" Checked="Postavi_Igraca" Unchecked="Ukloni_Igraca"></MenuItem>
+                    <MenuItem x:Name="Menu_Boja_2" Width="Auto" Height="Auto" Header="Zeleni" IsCheckable="True" Checked="Postavi_Igraca" Unchecked="Ukloni_Igraca"></MenuItem>
+                    <MenuItem x:Name="Menu_Boja_3" Width="Auto" Height="Auto" Header="Žuti" IsCheckable="True" Checked="Postavi_Igraca" Unchecked="Ukloni_Igraca"></MenuItem>
+                    <MenuItem x:Name="Menu_Boja_4" Width="Auto" Height="Auto" Header="Crveni" IsCheckable="True" Checked="Postavi_Igraca" Unchecked="Ukloni_Igraca"></MenuItem>
+                </MenuItem>
+                <MenuItem Width="Auto" Height="Auto" Header="Ikona igrača">
+                    <MenuItem x:Name="Menu_Slika_1" Width="Auto" Height="Auto" Header="Plavi">
+                        <MenuItem Width="Auto" Height="Auto" Header="Smješak">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Blue/blue_smile.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Veliki Smješak">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Blue/blue_bigsmile.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Zaljubljeni">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Blue/blue_inlove.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Zbunjeni">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Blue/blue_confused.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Namiguje">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Blue/blue_blink.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Ljutko">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Blue/blue_angry.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Dodaj Sliku" Click="DodajSliku_Click"></MenuItem>
+                    </MenuItem>
+                    <MenuItem x:Name="Menu_Slika_2" Width="Auto" Height="Auto" Header="Zeleni">
+                        <MenuItem Width="Auto" Height="Auto" Header="Smješak">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Green/green_smile.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Veliki Smješak">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Green/green_bigsmile.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Zaljubljeni">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Green/green_inlove.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Zbunjeni">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Green/green_confused.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Namiguje">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Green/green_blink.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Ljutko">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Green/green_angry.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Dodaj Sliku" Click="DodajSliku_Click"></MenuItem>
+                    </MenuItem>
+                    <MenuItem x:Name="Menu_Slika_3" Width="Auto" Height="Auto" Header="Žuti">
+                        <MenuItem Width="Auto" Height="Auto" Header="Smješak">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Yellow/yellow_smile.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Veliki Smješak">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Yellow/yellow_bigsmile.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Zaljubljeni">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Yellow/yellow_inlove.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Zbunjeni">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Yellow/yellow_confused.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Namiguje">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Yellow/yellow_blink.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Ljutko">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Yellow/yellow_angry.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Dodaj Sliku" Click="DodajSliku_Click"></MenuItem>
+                    </MenuItem>
+                    <MenuItem x:Name="Menu_Slika_4" Width="Auto" Height="Auto" Header="Crveni">
+                        <MenuItem Width="Auto" Height="Auto" Header="Smješak">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Red/red_smile.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Veliki Smješak">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Red/red_bigsmile.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Zaljubljeni">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Red/red_inlove.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Zbunjeni">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Red/red_confused.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Namiguje">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Red/red_blink.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Ljutko">
+                            <Image Width="50" Height="50" Source="/Resources/Images/Red/red_angry.png" MouseLeftButtonUp="OdabirSlike_Click"></Image>
+                        </MenuItem>
+                        <MenuItem Width="Auto" Height="Auto" Header="Dodaj Sliku" Click="DodajSliku_Click"></MenuItem>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Width="Auto" Height="Auto" Header="Zatvori igru" Click="Zatvori_Igru"></MenuItem>
+            </Menu>
+            <Grid Height="600" Width="600" x:Name="PoljeZaIgru">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+                <ColumnDefinition Width="20*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+                <RowDefinition Height="20*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <controls:field x:Name="Polje_48" Grid.Row="1" Grid.Column="7"></controls:field>
+            <controls:field x:Name="Polje_47" Grid.Row="1" Grid.Column="6"></controls:field>
+            <controls:field x:Name="Polje_46" Grid.Row="2" Grid.Column="6"></controls:field>
+            <controls:field x:Name="Polje_45" Grid.Row="3" Grid.Column="6"></controls:field>
+            <controls:field x:Name="Polje_44" Grid.Row="4" Grid.Column="6"></controls:field>
+            <controls:field x:Name="Polje_43" Grid.Row="5" Grid.Column="6"></controls:field>
+            <controls:field x:Name="Polje_42" Grid.Row="6" Grid.Column="6"></controls:field>
+            <controls:field x:Name="Polje_1" Grid.Row="1" Grid.Column="8" Boja_pozadine="LightBlue"></controls:field>
+            <controls:field x:Name="Polje_2" Grid.Row="2" Grid.Column="8"></controls:field>
+            <controls:field x:Name="Polje_3" Grid.Row="3" Grid.Column="8"></controls:field>
+            <controls:field x:Name="Polje_4" Grid.Row="4" Grid.Column="8"></controls:field>
+            <controls:field x:Name="Polje_5" Grid.Row="5" Grid.Column="8"></controls:field>
+            <controls:field x:Name="Polje_6" Grid.Row="6" Grid.Column="8"></controls:field>
+            <controls:field x:Name="Polje_37" Grid.Row="6" Grid.Column="1" Boja_pozadine="DarkSalmon"></controls:field>
+            <controls:field x:Name="Polje_38" Grid.Row="6" Grid.Column="2"></controls:field>
+            <controls:field x:Name="Polje_39" Grid.Row="6" Grid.Column="3"></controls:field>
+            <controls:field x:Name="Polje_40" Grid.Row="6" Grid.Column="4"></controls:field>
+            <controls:field x:Name="Polje_41" Grid.Row="6" Grid.Column="5"></controls:field>
+            <controls:field x:Name="Polje_7" Grid.Row="6" Grid.Column="9"></controls:field>
+            <controls:field x:Name="Polje_8" Grid.Row="6" Grid.Column="10"></controls:field>
+            <controls:field x:Name="Polje_9" Grid.Row="6" Grid.Column="11"></controls:field>
+            <controls:field x:Name="Polje_10" Grid.Row="6" Grid.Column="12"></controls:field>
+            <controls:field x:Name="Polje_11" Grid.Row="6" Grid.Column="13"></controls:field>
+            <controls:field x:Name="Polje_12" Grid.Row="7" Grid.Column="13"></controls:field>
+            <controls:field x:Name="Polje_36" Grid.Row="7" Grid.Column="1"></controls:field>
+            <controls:field x:Name="Polje_35" Grid.Row="8" Grid.Column="1"></controls:field>
+            <controls:field x:Name="Polje_34" Grid.Row="8" Grid.Column="2"></controls:field>
+            <controls:field x:Name="Polje_33" Grid.Row="8" Grid.Column="3"></controls:field>
+            <controls:field x:Name="Polje_32" Grid.Row="8" Grid.Column="4"></controls:field>
+            <controls:field x:Name="Polje_31" Grid.Row="8" Grid.Column="5"></controls:field>
+            <controls:field x:Name="Polje_30" Grid.Row="8" Grid.Column="6"></controls:field>
+            <controls:field x:Name="Polje_18" Grid.Row="8" Grid.Column="8"></controls:field>
+            <controls:field x:Name="Polje_17" Grid.Row="8" Grid.Column="9"></controls:field>
+            <controls:field x:Name="Polje_16" Grid.Row="8" Grid.Column="10"></controls:field>
+            <controls:field x:Name="Polje_15" Grid.Row="8" Grid.Column="11"></controls:field>
+            <controls:field x:Name="Polje_14" Grid.Row="8" Grid.Column="12"></controls:field>
+            <controls:field x:Name="Polje_13" Grid.Row="8" Grid.Column="13" Boja_pozadine="DarkSeaGreen"></controls:field>
+            <controls:field x:Name="Polje_29" Grid.Row="9" Grid.Column="6"></controls:field>
+            <controls:field x:Name="Polje_28" Grid.Row="10" Grid.Column="6"></controls:field>
+            <controls:field x:Name="Polje_27" Grid.Row="11" Grid.Column="6"></controls:field>
+            <controls:field x:Name="Polje_26" Grid.Row="12" Grid.Column="6"></controls:field>
+            <controls:field x:Name="Polje_25" Grid.Row="13" Grid.Column="6" Boja_pozadine="Khaki"></controls:field>
+            <controls:field x:Name="Polje_19" Grid.Row="9" Grid.Column="8"></controls:field>
+            <controls:field x:Name="Polje_20" Grid.Row="10" Grid.Column="8"></controls:field>
+            <controls:field x:Name="Polje_21" Grid.Row="11" Grid.Column="8"></controls:field>
+            <controls:field x:Name="Polje_22" Grid.Row="12" Grid.Column="8"></controls:field>
+            <controls:field x:Name="Polje_23" Grid.Row="13" Grid.Column="8"></controls:field>
+            <controls:field x:Name="Polje_24" Grid.Row="13" Grid.Column="7"></controls:field>
+            <controls:field x:Name="Blue_Home_1" Grid.Row="1" Grid.Column="12" Boja_pozadine="CornflowerBlue"></controls:field>
+            <controls:field x:Name="Blue_Home_2" Grid.Row="1" Grid.Column="13" Boja_pozadine="CornflowerBlue"></controls:field>
+            <controls:field x:Name="Blue_Home_3" Grid.Row="2" Grid.Column="12" Boja_pozadine="CornflowerBlue"></controls:field>
+            <controls:field x:Name="Blue_Home_4" Grid.Row="2" Grid.Column="13" Boja_pozadine="CornflowerBlue"></controls:field>
+            <controls:field x:Name="Blue_Finish_1" Grid.Row="2" Grid.Column="7" Boja_pozadine="CornflowerBlue"></controls:field>
+            <controls:field x:Name="Blue_Finish_2" Grid.Row="3" Grid.Column="7" Boja_pozadine="CornflowerBlue"></controls:field>
+            <controls:field x:Name="Blue_Finish_3" Grid.Row="4" Grid.Column="7" Boja_pozadine="CornflowerBlue"></controls:field>
+            <controls:field x:Name="Blue_Finish_4" Grid.Row="5" Grid.Column="7" Boja_pozadine="CornflowerBlue"></controls:field>
+            <controls:field x:Name="Red_Home_1" Grid.Row="1" Grid.Column="1" Boja_pozadine="LightCoral"></controls:field>
+            <controls:field x:Name="Red_Home_2" Grid.Row="1" Grid.Column="2" Boja_pozadine="LightCoral"></controls:field>
+            <controls:field x:Name="Red_Home_3" Grid.Row="2" Grid.Column="1" Boja_pozadine="LightCoral"></controls:field>
+            <controls:field x:Name="Red_Home_4" Grid.Row="2" Grid.Column="2" Boja_pozadine="LightCoral"></controls:field>
+            <controls:field x:Name="Red_Finish_1" Grid.Row="7" Grid.Column="2" Boja_pozadine="LightCoral"></controls:field>
+            <controls:field x:Name="Red_Finish_2" Grid.Row="7" Grid.Column="3" Boja_pozadine="LightCoral"></controls:field>
+            <controls:field x:Name="Red_Finish_3" Grid.Row="7" Grid.Column="4" Boja_pozadine="LightCoral"></controls:field>
+            <controls:field x:Name="Red_Finish_4" Grid.Row="7" Grid.Column="5" Boja_pozadine="LightCoral"></controls:field>
+            <controls:field x:Name="Green_Home_1" Grid.Row="12" Grid.Column="12" Boja_pozadine="LightGreen"></controls:field>
+            <controls:field x:Name="Green_Home_2" Grid.Row="12" Grid.Column="13" Boja_pozadine="LightGreen"></controls:field>
+            <controls:field x:Name="Green_Home_3" Grid.Row="13" Grid.Column="12" Boja_pozadine="LightGreen"></controls:field>
+            <controls:field x:Name="Green_Home_4" Grid.Row="13" Grid.Column="13" Boja_pozadine="LightGreen"></controls:field>
+            <controls:field x:Name="Green_Finish_1" Grid.Row="7" Grid.Column="12" Boja_pozadine="LightGreen" HorizontalAlignment="Right" Margin="0,1,1,1" Width="43"></controls:field>
+            <controls:field x:Name="Green_Finish_2" Grid.Row="7" Grid.Column="11" Boja_pozadine="LightGreen"></controls:field>
+            <controls:field x:Name="Green_Finish_3" Grid.Row="7" Grid.Column="10" Boja_pozadine="LightGreen"></controls:field>
+            <controls:field x:Name="Green_Finish_4" Grid.Row="7" Grid.Column="9" Boja_pozadine="LightGreen"></controls:field>
+            <controls:field x:Name="Yellow_Home_1" Grid.Row="12" Grid.Column="1" Boja_pozadine="Yellow"></controls:field>
+            <controls:field x:Name="Yellow_Home_2" Grid.Row="12" Grid.Column="2" Boja_pozadine="Yellow"></controls:field>
+            <controls:field x:Name="Yellow_Home_3" Grid.Row="13" Grid.Column="1" Boja_pozadine="Yellow"></controls:field>
+            <controls:field x:Name="Yellow_Home_4" Grid.Row="13" Grid.Column="2" Boja_pozadine="Yellow"></controls:field>
+            <controls:field x:Name="Yellow_Finish_1" Grid.Row="12" Grid.Column="7" Boja_pozadine="Yellow"></controls:field>
+            <controls:field x:Name="Yellow_Finish_2" Grid.Row="11" Grid.Column="7" Boja_pozadine="Yellow"></controls:field>
+            <controls:field x:Name="Yellow_Finish_3" Grid.Row="10" Grid.Column="7" Boja_pozadine="Yellow"></controls:field>
+            <controls:field x:Name="Yellow_Finish_4" Grid.Row="9" Grid.Column="7" Boja_pozadine="Yellow"></controls:field>
+            <Image x:Name="Kockica" Grid.Row="7" Grid.Column="7" Margin="0" Source="/Resources/Images/Kockica/Kockica.png"></Image>
+                <TextBlock x:Name="Opis" Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="5" TextAlignment="Center" VerticalAlignment="Center" FontFamily="Arial" FontSize="12"  Text="Odaberi igrače i započni igru!"></TextBlock>
+            </Grid>
+    </StackPanel>
+    </ScrollViewer>
+</Window>
