@@ -35,6 +35,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\kockica_ikona.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -149,6 +152,9 @@
     <Resource Include="Resources\Images\Kockica\Kockica_4.png" />
     <Resource Include="Resources\Images\Kockica\Kockica_5.png" />
     <Resource Include="Resources\Images\Kockica\Kockica_6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\kockica_ikona.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
