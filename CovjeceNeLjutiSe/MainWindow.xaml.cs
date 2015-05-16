@@ -30,7 +30,7 @@ namespace CovjeceNeLjutiSe
             //konstruktor novog igrača
             public igraci(string boja, string boja_hrv, bool aktivan, string putanja, int pocetak)
             {
-                this.boja=boja;
+                this.boja = boja;
                 this.boja_hrv = boja_hrv;
                 this.aktivan = aktivan;
                 this.putanja = putanja;
@@ -65,7 +65,7 @@ namespace CovjeceNeLjutiSe
 
         string[] name = new string[4];  //varijabla za pomicanje pijuna, sadrži name trenutne pozicije svakog od pijuna
         string[] new_name = new string[4]; //varijabla za pomicanje pijuna, sadrži name pozicije koju bi svaki od pijuna trebao imati ako ga igrač odabere
-        
+
         int dice; //vrijednost na kockici
         int broj_na_kockici; //vrijednost na kockici dobivena preko mreže
         int moj_broj; //koji je igrač pokrenut na ovom računalu u slučaju mrežne igre
@@ -79,7 +79,7 @@ namespace CovjeceNeLjutiSe
         bool Server;    //igra je pokrenuta tako da se igra mrežno i igrač je server
         bool Lokalno;   //igra je pokrenuta tako da se igra lokalno
 
-        
+
 
         //konstruktor prozora
         public MainWindow()
@@ -88,16 +88,16 @@ namespace CovjeceNeLjutiSe
 
             //inicijalizira četiri moguća igrača, njihovu boju na engleskom i hrvatskom, to da po defaultu ne igraju, putanju do slike i početno polje
             //0=plavi, 1=zeleni, 2=zuti, 3=crveni
-            igrac[0] = new igraci("Blue","plavi",false,"/Resources/Images/Blue/blue_smile.png", 0);
-            igrac[1] = new igraci("Green","zeleni", false, "/Resources/Images/Green/green_smile.png", 12);
-            igrac[2] = new igraci("Yellow","žuti", false, "/Resources/Images/Yellow/yellow_smile.png", 24);
+            igrac[0] = new igraci("Blue", "plavi", false, "/Resources/Images/Blue/blue_smile.png", 0);
+            igrac[1] = new igraci("Green", "zeleni", false, "/Resources/Images/Green/green_smile.png", 12);
+            igrac[2] = new igraci("Yellow", "žuti", false, "/Resources/Images/Yellow/yellow_smile.png", 24);
             igrac[3] = new igraci("Red", "crveni", false, "/Resources/Images/Red/red_smile.png", 36);
 
 
             //u izborniku za postavljanje igrača postavlja početnu vrijednost svakog igrača na neaktivno
             for (int i = 0; i < 4; i++)
             {
-                string name = "Menu_Boja_" + Convert.ToString(i+1);
+                string name = "Menu_Boja_" + Convert.ToString(i + 1);
                 object obj = FindName(name);
                 if (obj != null)
                 {
@@ -109,7 +109,7 @@ namespace CovjeceNeLjutiSe
             //pokreni sockete
             sck_s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             sck_c = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            for(int i=0;i<4;i++)
+            for (int i = 0; i < 4; i++)
                 acc[i] = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         }
 
@@ -119,7 +119,7 @@ namespace CovjeceNeLjutiSe
             var menu_item = sender as MenuItem;
             for (int i = 0; i < 4; i++)
             {
-                string broj = Convert.ToString(i+1);
+                string broj = Convert.ToString(i + 1);
                 if (menu_item.Name.Contains(broj))  //menu_item.Name="Menu_Boja_broj"
                     igrac[i].aktivan = true;    //postavi tog igrača kao aktivnog
             }
@@ -185,12 +185,12 @@ namespace CovjeceNeLjutiSe
         void Close_Sockets()
         {
             if (sck_c.Connected)
-                sck_c.Close();
+                sck_c.Disconnect(false);
             for (int i = 0; i < 4; i++)
                 if (acc[i].Connected)
-                    acc[i].Close();
+                    acc[i].Disconnect(false);
             if (sck_s.Connected)
-                sck_s.Close();
+                sck_s.Disconnect(false);
         }
 
 
@@ -206,15 +206,19 @@ namespace CovjeceNeLjutiSe
             Server = false;
             Lokalno = true;
 
+            //ukloni ako je mogućnost bacanja kockice ostala od prethodne igre
+            this.Kockica.MouseDown -= new MouseButtonEventHandler(Igraj);
+
             //zatvori komunikaciju ako je ostala otvorena iz prethodne igre
             Close_Sockets();
+
 
             //korisnik može igrati lokalno ako je odabrao bar jednog igrača
             bool flag_active = false;
             for (int i = 0; i < 4; i++)
                 if (igrac[i].aktivan)
                     flag_active = true;
-            if(!flag_active)
+            if (!flag_active)
             {
                 Opis.Text = "Morate odabrati bar jednog igrača!";
                 return;
@@ -237,7 +241,7 @@ namespace CovjeceNeLjutiSe
                         flag = true;
                     }
                 }
-                if(!flag)
+                if (!flag)
                     polje.Slika = putanja_empty;    //ako nije isprazni polje
             }
 
@@ -248,16 +252,16 @@ namespace CovjeceNeLjutiSe
             player_counter = 0;
 
             //dok ne dođeš na igrača koji je aktivan vrti po igračima
-            while (!igrac[player_counter%4].aktivan)
+            while (!igrac[player_counter % 4].aktivan)
                 player_counter++;
 
             //obavijesti korisnika o tome tko igra
-            Opis.Text = "Igra " + igrac[player_counter%4].boja_hrv + "!";
-            if(igrac[player_counter%4].boja.Contains("Yellow"))
-                Opis.Foreground=Brushes.DarkGoldenrod;
+            Opis.Text = "Igra " + igrac[player_counter % 4].boja_hrv + "!";
+            if (igrac[player_counter % 4].boja.Contains("Yellow"))
+                Opis.Foreground = Brushes.DarkGoldenrod;
             else
             {
-                SolidColorBrush color = (SolidColorBrush)new BrushConverter().ConvertFromString(igrac[player_counter%4].boja);
+                SolidColorBrush color = (SolidColorBrush)new BrushConverter().ConvertFromString(igrac[player_counter % 4].boja);
                 Opis.Foreground = color;
             }
 
@@ -276,6 +280,9 @@ namespace CovjeceNeLjutiSe
             Klijent = false;
             Server = true;
             Lokalno = false;
+
+            //ukloni ako je mogućnost bacanja kockice ostala od prethodne igre
+            this.Kockica.MouseDown -= new MouseButtonEventHandler(Igraj);
 
             //zatvori komunikaciju ako je ostala otvorena iz prethodne igre
             Close_Sockets();
@@ -347,7 +354,8 @@ namespace CovjeceNeLjutiSe
 
                         //pošalji korisniku informaciju o tome koji je on igrač
                         buffer = Encoding.Default.GetBytes(j.ToString());
-                        try{
+                        try
+                        {
                             acc[j].Send(buffer, 0, buffer.Length, 0);
                         }
                         catch
@@ -356,8 +364,9 @@ namespace CovjeceNeLjutiSe
                         }
                         //provjeri je li korisnik primio poruku
                         buffer = new byte[255];
-                        try{
-                        rec = acc[j].Receive(buffer, 0, buffer.Length, 0);
+                        try
+                        {
+                            rec = acc[j].Receive(buffer, 0, buffer.Length, 0);
                         }
                         catch
                         {
@@ -430,8 +439,9 @@ namespace CovjeceNeLjutiSe
         {
             byte[] buffer = new byte[255];
             int rec;
-            try{
-            rec = acc[player_counter%4].Receive(buffer, 0, buffer.Length, 0);
+            try
+            {
+                rec = acc[player_counter % 4].Receive(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -439,11 +449,19 @@ namespace CovjeceNeLjutiSe
             }
             Array.Resize(ref buffer, rec);
             string poruka = Encoding.Default.GetString(buffer);
-            broj_na_kockici = poruka[0] - '0';
+            try
+            {
+                broj_na_kockici = poruka[0] - '0';
+            }
+            catch
+            {
+                return;
+            }
 
             //pošalji klijentu odgovor da si primio poruku
             buffer = Encoding.Default.GetBytes("MessageAccepted");
-            try{
+            try
+            {
                 acc[player_counter % 4].Send(buffer, 0, buffer.Length, 0);
             }
             catch
@@ -460,12 +478,12 @@ namespace CovjeceNeLjutiSe
             //proslijedi informaciju ostalim klijentima
             for (int i = 0; i < 4; i++)
             {
-                if (igrac[i].aktivan && i != (player_counter % 4) && i!=moj_broj)
+                if (igrac[i].aktivan && i != (player_counter % 4) && i != moj_broj)
                 {
                     buffer = Encoding.Default.GetBytes(broj_na_kockici.ToString());
                     try
                     {
-                    acc[i].Send(buffer, 0, buffer.Length, 0);
+                        acc[i].Send(buffer, 0, buffer.Length, 0);
                     }
                     catch
                     {
@@ -474,8 +492,9 @@ namespace CovjeceNeLjutiSe
 
                     //provjeri je li korisnik primio poruku
                     buffer = new byte[255];
-                    try{
-                    rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
+                    try
+                    {
+                        rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
                     }
                     catch
                     {
@@ -502,8 +521,9 @@ namespace CovjeceNeLjutiSe
 
             //primi podatke o trenutnom polju
             buffer = new byte[255];
-            try{
-            rec = acc[player_counter % 4].Receive(buffer, 0, buffer.Length, 0);
+            try
+            {
+                rec = acc[player_counter % 4].Receive(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -514,8 +534,9 @@ namespace CovjeceNeLjutiSe
 
             //pošalji aktivnom klijentu odgovor da si primio poruku
             buffer = Encoding.Default.GetBytes("MessageAccepted");
-            try{
-            acc[player_counter % 4].Send(buffer, 0, buffer.Length, 0);
+            try
+            {
+                acc[player_counter % 4].Send(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -524,8 +545,9 @@ namespace CovjeceNeLjutiSe
 
             //primi podatke o novom polju
             buffer = new byte[255];
-            try{
-            rec = acc[player_counter % 4].Receive(buffer, 0, buffer.Length, 0);
+            try
+            {
+                rec = acc[player_counter % 4].Receive(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -536,8 +558,9 @@ namespace CovjeceNeLjutiSe
 
             //pošalji serveru odgovor da si primio poruku
             buffer = Encoding.Default.GetBytes("MessageAccepted");
-            try{
-            acc[player_counter % 4].Send(buffer, 0, buffer.Length, 0);
+            try
+            {
+                acc[player_counter % 4].Send(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -546,8 +569,9 @@ namespace CovjeceNeLjutiSe
 
             //primi podatke o odabranom pijunu
             buffer = new byte[255];
-            try{
-            rec = acc[player_counter % 4].Receive(buffer, 0, buffer.Length, 0);
+            try
+            {
+                rec = acc[player_counter % 4].Receive(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -555,12 +579,21 @@ namespace CovjeceNeLjutiSe
             }
             Array.Resize(ref buffer, rec);
             poruka = Encoding.Default.GetString(buffer);
-            int odabrani = poruka[0] - '0';
+            int odabrani;
+            try
+            {
+                odabrani = poruka[0] - '0';
+            }
+            catch
+            {
+                return;
+            }
 
             //pošalji aktivnom klijetnu odgovor da si primio poruku
             buffer = Encoding.Default.GetBytes("MessageAccepted");
-            try{
-            acc[player_counter % 4].Send(buffer, 0, buffer.Length, 0);
+            try
+            {
+                acc[player_counter % 4].Send(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -569,7 +602,7 @@ namespace CovjeceNeLjutiSe
 
             this.Dispatcher.Invoke((Action)(() =>
             {
-                Opis.Text="Broj"+odabrani+name+new_name;
+                Opis.Text = "Broj" + odabrani + name + new_name;
             }));
 
             //proslijedi informaciju ostalim klijentima
@@ -579,8 +612,9 @@ namespace CovjeceNeLjutiSe
                 {
                     //pošalji podatak o trenutnom polju
                     buffer = Encoding.Default.GetBytes(name);
-                    try{
-                    acc[i].Send(buffer, 0, buffer.Length, 0);
+                    try
+                    {
+                        acc[i].Send(buffer, 0, buffer.Length, 0);
                     }
                     catch
                     {
@@ -589,60 +623,9 @@ namespace CovjeceNeLjutiSe
 
                     //provjeri je li korisnik primio poruku
                     buffer = new byte[255];
-                    try{
-                    rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
-                    }
-                    catch
+                    try
                     {
-                        MessageBoxResult result = MessageBox.Show("Ups! Došlo je do greške!", "Greska pri povezivanju!"); return;
-                    }
-                    Array.Resize(ref buffer, rec);
-                    if (Encoding.Default.GetString(buffer).Contains("MessageAccepted") == false)
-                        {
-                            Opis.Text = "Greska pri povezivanju!\r\nPokušaj ponovo!";
-                            return;
-                        }
-
-                    //pošalji podatak o novom polju
-                    buffer = Encoding.Default.GetBytes(new_name);
-                    try{
-                    acc[i].Send(buffer, 0, buffer.Length, 0);
-                    }
-                    catch
-                    {
-                        MessageBoxResult result = MessageBox.Show("Ups! Došlo je do greške!", "Greska pri povezivanju!"); return;
-                    }
-
-                    //provjeri je li korisnik primio poruku
-                    buffer = new byte[255];
-                    try{
-                    rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
-                    }
-                    catch
-                    {
-                        MessageBoxResult result = MessageBox.Show("Ups! Došlo je do greške!", "Greska pri povezivanju!"); return;
-                    }
-                    Array.Resize(ref buffer, rec);
-                    if (Encoding.Default.GetString(buffer).Contains("MessageAccepted") == false)
-                        {
-                            Opis.Text = "Greska pri povezivanju!\r\nPokušaj ponovo!";
-                            return;
-                        }
-
-                    //pošalji podatak o trenutnom pijunu
-                    buffer = Encoding.Default.GetBytes(odabrani.ToString());
-                    try{
-                    acc[i].Send(buffer, 0, buffer.Length, 0);
-                    }
-                    catch
-                    {
-                        MessageBoxResult result = MessageBox.Show("Ups! Došlo je do greške!", "Greska pri povezivanju!"); return;
-                    }
-
-                    //provjeri je li korisnik primio poruku
-                    buffer = new byte[255];
-                    try{
-                    rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
+                        rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
                     }
                     catch
                     {
@@ -654,7 +637,63 @@ namespace CovjeceNeLjutiSe
                         Opis.Text = "Greska pri povezivanju!\r\nPokušaj ponovo!";
                         return;
                     }
-                 }
+
+                    //pošalji podatak o novom polju
+                    buffer = Encoding.Default.GetBytes(new_name);
+                    try
+                    {
+                        acc[i].Send(buffer, 0, buffer.Length, 0);
+                    }
+                    catch
+                    {
+                        MessageBoxResult result = MessageBox.Show("Ups! Došlo je do greške!", "Greska pri povezivanju!"); return;
+                    }
+
+                    //provjeri je li korisnik primio poruku
+                    buffer = new byte[255];
+                    try
+                    {
+                        rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
+                    }
+                    catch
+                    {
+                        MessageBoxResult result = MessageBox.Show("Ups! Došlo je do greške!", "Greska pri povezivanju!"); return;
+                    }
+                    Array.Resize(ref buffer, rec);
+                    if (Encoding.Default.GetString(buffer).Contains("MessageAccepted") == false)
+                    {
+                        Opis.Text = "Greska pri povezivanju!\r\nPokušaj ponovo!";
+                        return;
+                    }
+
+                    //pošalji podatak o trenutnom pijunu
+                    buffer = Encoding.Default.GetBytes(odabrani.ToString());
+                    try
+                    {
+                        acc[i].Send(buffer, 0, buffer.Length, 0);
+                    }
+                    catch
+                    {
+                        MessageBoxResult result = MessageBox.Show("Ups! Došlo je do greške!", "Greska pri povezivanju!"); return;
+                    }
+
+                    //provjeri je li korisnik primio poruku
+                    buffer = new byte[255];
+                    try
+                    {
+                        rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
+                    }
+                    catch
+                    {
+                        MessageBoxResult result = MessageBox.Show("Ups! Došlo je do greške!", "Greska pri povezivanju!"); return;
+                    }
+                    Array.Resize(ref buffer, rec);
+                    if (Encoding.Default.GetString(buffer).Contains("MessageAccepted") == false)
+                    {
+                        Opis.Text = "Greska pri povezivanju!\r\nPokušaj ponovo!";
+                        return;
+                    }
+                }
             }
             this.Dispatcher.Invoke((Action)(() =>
             {
@@ -716,27 +755,28 @@ namespace CovjeceNeLjutiSe
                             MessageBoxResult result = MessageBox.Show(igrac[player_counter % 4].boja_hrv.ToUpper() + " je pobjedio!", "Pobjeda!");
                             //zatvori komunikaciju
                             Close_Sockets();
+                            Opis.Text = "";
                         }
                     }
                 }
                 //ako igrač nije dobio šesticu prijeđi na sljedećeg aktivnog igrača
-            //(igrač koji je dobio šesticu ima pravo ponovo igrati)
-            if (!sestica)
-            {
-                player_counter++;
-                while (!igrac[player_counter % 4].aktivan)
+                //(igrač koji je dobio šesticu ima pravo ponovo igrati)
+                if (!sestica)
+                {
                     player_counter++;
-            }
-            Opis.Text = "Ti si " + igrac[moj_broj].boja_hrv + "!\r\n"+" Igra " + igrac[player_counter%4].boja_hrv + "!";
-            if(igrac[player_counter%4].boja.Contains("Yellow"))
-                Opis.Foreground=Brushes.DarkGoldenrod;
-            else
-            {
-                SolidColorBrush color = (SolidColorBrush)new BrushConverter().ConvertFromString(igrac[player_counter%4].boja);
-                Opis.Foreground = color;
-            }
-            string putanja_kockice = "/Resources/Images/kockica/Kockica.png";
-            Kockica.Source = new BitmapImage(new Uri(putanja_kockice, UriKind.RelativeOrAbsolute));
+                    while (!igrac[player_counter % 4].aktivan)
+                        player_counter++;
+                }
+                Opis.Text = "Ti si " + igrac[moj_broj].boja_hrv + "!\r\n" + " Igra " + igrac[player_counter % 4].boja_hrv + "!";
+                if (igrac[player_counter % 4].boja.Contains("Yellow"))
+                    Opis.Foreground = Brushes.DarkGoldenrod;
+                else
+                {
+                    SolidColorBrush color = (SolidColorBrush)new BrushConverter().ConvertFromString(igrac[player_counter % 4].boja);
+                    Opis.Foreground = color;
+                }
+                string putanja_kockice = "/Resources/Images/kockica/Kockica.png";
+                Kockica.Source = new BitmapImage(new Uri(putanja_kockice, UriKind.RelativeOrAbsolute));
             }));
 
             //ako je njegov red omogući korisniku da klikne na kockicu
@@ -761,6 +801,10 @@ namespace CovjeceNeLjutiSe
             Klijent = true;
             Server = false;
             Lokalno = false;
+
+            //ukloni ako je mogućnost bacanja kockice ostala od prethodne igre
+            this.Kockica.MouseDown -= new MouseButtonEventHandler(Igraj);
+
             //zatvori komunikaciju ako je ostala otvorena iz prethodne igre
             Close_Sockets();
 
@@ -802,8 +846,9 @@ namespace CovjeceNeLjutiSe
                     Opis.Text = "Ne mogu dobiti odgovor od servera!\r\nProvjeri ima li slobodnih igrača!";
                     return;
                 }
-                try{
-                sck_c.ReceiveTimeout = 10*60*1000;  //ako si se prvi put uspješno povezao, sad podigni timeout na 10 min
+                try
+                {
+                    sck_c.ReceiveTimeout = 10 * 60 * 1000;  //ako si se prvi put uspješno povezao, sad podigni timeout na 10 min
                 }
                 catch
                 {
@@ -819,8 +864,9 @@ namespace CovjeceNeLjutiSe
 
                 //pošalji serveru odgovor da si primio poruku
                 buffer = Encoding.Default.GetBytes("MessageAccepted");
-                try{
-                sck_c.Send(buffer, 0, buffer.Length, 0);
+                try
+                {
+                    sck_c.Send(buffer, 0, buffer.Length, 0);
                 }
                 catch
                 {
@@ -830,8 +876,9 @@ namespace CovjeceNeLjutiSe
 
             //primi od servera informaciju o tome koji si igač
             buffer = new byte[255];
-            try{
-            rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
+            try
+            {
+                rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -843,8 +890,9 @@ namespace CovjeceNeLjutiSe
 
             //pošalji serveru odgovor da si primio poruku
             buffer = Encoding.Default.GetBytes("MessageAccepted");
-            try{
-            sck_c.Send(buffer, 0, buffer.Length, 0);
+            try
+            {
+                sck_c.Send(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -884,7 +932,7 @@ namespace CovjeceNeLjutiSe
                 player_counter++;
 
             //obavijesti korisnika o tome tko igra
-            Opis.Text = "Ti si " + igrac[moj_broj].boja_hrv + "!\r\n"+"Igra " + igrac[player_counter % 4].boja_hrv + "!";
+            Opis.Text = "Ti si " + igrac[moj_broj].boja_hrv + "!\r\n" + "Igra " + igrac[player_counter % 4].boja_hrv + "!";
             if (igrac[player_counter % 4].boja.Contains("Yellow"))
                 Opis.Foreground = Brushes.DarkGoldenrod;
             else
@@ -900,17 +948,18 @@ namespace CovjeceNeLjutiSe
                 //ako nije tvoj red moraš preko mreže primiti podatke o tijeku igre
                 //prvo primam broj na kockici
                 var postavi_broj_na_kockici = new Thread(PostaviBrojNaKockiciKlijent);
-                postavi_broj_na_kockici.Start();  
+                postavi_broj_na_kockici.Start();
             }
         }
 
 
         void PostaviBrojNaKockiciKlijent()
         {
-            byte[] buffer= new byte [255];
+            byte[] buffer = new byte[255];
             int rec;
-            try{
-            rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
+            try
+            {
+                rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -918,12 +967,20 @@ namespace CovjeceNeLjutiSe
             }
             Array.Resize(ref buffer, rec);
             string poruka = Encoding.Default.GetString(buffer);
-            broj_na_kockici = poruka[0] - '0';
+            try
+            {
+                broj_na_kockici = poruka[0] - '0';
+            }
+            catch
+            {
+                return;
+            }
 
             //pošalji serveru odgovor da si primio poruku
             buffer = Encoding.Default.GetBytes("MessageAccepted");
-            try{
-            sck_c.Send(buffer, 0, buffer.Length, 0);
+            try
+            {
+                sck_c.Send(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -938,7 +995,7 @@ namespace CovjeceNeLjutiSe
 
             //Kada server pomanke pijuna namjesti svoje sučelje
             var postavi_sucelje = new Thread(PostaviSuceljeKlijent);
-            postavi_sucelje.Start();  
+            postavi_sucelje.Start();
         }
 
         void PostaviSuceljeKlijent()
@@ -950,8 +1007,9 @@ namespace CovjeceNeLjutiSe
 
             //primi podatke o trenutnom polju
             buffer = new byte[255];
-            try{
-            rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
+            try
+            {
+                rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -962,8 +1020,9 @@ namespace CovjeceNeLjutiSe
 
             //pošalji serveru odgovor da si primio poruku
             buffer = Encoding.Default.GetBytes("MessageAccepted");
-            try{
-            sck_c.Send(buffer, 0, buffer.Length, 0);
+            try
+            {
+                sck_c.Send(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -972,8 +1031,9 @@ namespace CovjeceNeLjutiSe
 
             //primi podatke o novom polju
             buffer = new byte[255];
-            try{
-            rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
+            try
+            {
+                rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -984,8 +1044,9 @@ namespace CovjeceNeLjutiSe
 
             //pošalji serveru odgovor da si primio poruku
             buffer = Encoding.Default.GetBytes("MessageAccepted");
-            try{
-            sck_c.Send(buffer, 0, buffer.Length, 0);
+            try
+            {
+                sck_c.Send(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -995,8 +1056,9 @@ namespace CovjeceNeLjutiSe
 
             //primi podatke o odabranom pijunu
             buffer = new byte[255];
-            try{
-            rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
+            try
+            {
+                rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
             }
             catch
             {
@@ -1004,7 +1066,15 @@ namespace CovjeceNeLjutiSe
             }
             Array.Resize(ref buffer, rec);
             poruka = Encoding.Default.GetString(buffer);
-            int odabrani = poruka[0] - '0';
+            int odabrani;
+            try
+            {
+                odabrani = poruka[0] - '0';
+            }
+            catch
+            {
+                return;
+            }
 
             //pošalji serveru odgovor da si primio poruku
             buffer = Encoding.Default.GetBytes("MessageAccepted");
@@ -1021,83 +1091,84 @@ namespace CovjeceNeLjutiSe
             this.Dispatcher.Invoke((Action)(() =>
             {
 
-            bool sestica = (broj_na_kockici == 6); //flag koji provjerava je li broj na kockici jednak 6
+                bool sestica = (broj_na_kockici == 6); //flag koji provjerava je li broj na kockici jednak 6
 
-            object obj = FindName(name);  //pronađi trenutno polje
-            var polje = obj as field;
+                object obj = FindName(name);  //pronađi trenutno polje
+                var polje = obj as field;
 
-            object obj2 = FindName(new_name);  //pronađi iduće polje
-            if (obj2 != null)
-            {
-                var novo_polje = obj2 as field;
-                if (novo_polje.Slika.Contains(igrac[player_counter % 4].putanja) == false)
+                object obj2 = FindName(new_name);  //pronađi iduće polje
+                if (obj2 != null)
                 {
-                    //pogledaj nalazi se na odabranom polju pijun nekog drugog igrača
-                    for (int i = 0; i < 4; i++) //za svakog igrača
-                        //ako to nije trenutni igrač i ako na novom polju postoji pijun tog igrača
-                        if (i != (player_counter % 4) && novo_polje.Slika.Contains(igrac[i].putanja))
-                        {
-                            //za svaki od pijuna tog igrača
-                            for (int j = 0; j < 4; j++)
+                    var novo_polje = obj2 as field;
+                    if (novo_polje.Slika.Contains(igrac[player_counter % 4].putanja) == false)
+                    {
+                        //pogledaj nalazi se na odabranom polju pijun nekog drugog igrača
+                        for (int i = 0; i < 4; i++) //za svakog igrača
+                            //ako to nije trenutni igrač i ako na novom polju postoji pijun tog igrača
+                            if (i != (player_counter % 4) && novo_polje.Slika.Contains(igrac[i].putanja))
                             {
-                                string name_pijun = "Polje_" + Convert.ToString((igrac[i].pocetak + igrac[i].getProlazak(j)) % 49);
-                                //provjeri nalazi li se taj pijun na novom polju trenutnog igrača
-                                if (novo_polje.Name.Contains(name_pijun))
+                                //za svaki od pijuna tog igrača
+                                for (int j = 0; j < 4; j++)
                                 {
-                                    //ako je prebaci tog igrača u kučicu
-                                    object objec = FindName(igrac[i].boja + "_Home_" + Convert.ToString(j + 1));
-                                    var polje_home = objec as field;
-                                    polje_home.Slika = igrac[i].putanja;
-                                    igrac[i].setProlazak(j, 0); //postavi tom pijunu da nije prošao ništa puta
-                                    i = j = 4;  //i zatvori petlju
+                                    string name_pijun = "Polje_" + Convert.ToString((igrac[i].pocetak + igrac[i].getProlazak(j)) % 49);
+                                    //provjeri nalazi li se taj pijun na novom polju trenutnog igrača
+                                    if (novo_polje.Name.Contains(name_pijun))
+                                    {
+                                        //ako je prebaci tog igrača u kučicu
+                                        object objec = FindName(igrac[i].boja + "_Home_" + Convert.ToString(j + 1));
+                                        var polje_home = objec as field;
+                                        polje_home.Slika = igrac[i].putanja;
+                                        igrac[i].setProlazak(j, 0); //postavi tom pijunu da nije prošao ništa puta
+                                        i = j = 4;  //i zatvori petlju
+                                    }
                                 }
                             }
+
+                        polje.Slika = putanja_empty; //isprazni polje na kojem se trenutno nalazi pijun
+                        novo_polje.Slika = igrac[player_counter % 4].putanja;   //postavi pijuna na iduće polje
+                        //ako je ovaj potez bio izlazak iz kučice, onda se pijun postavlja na prvo mjesto, bez obzira na to koji je broj bio na kockici
+                        if (igrac[player_counter % 4].getProlazak(odabrani) == 0)
+                            broj_na_kockici = 1;
+                        //ako je broj polja prelazio početno polje, povećaj broj koraka koliko se pijun pomaknuo
+                        if (igrac[player_counter % 4].pocetak + igrac[player_counter % 4].getProlazak(odabrani) <= 48 && igrac[player_counter % 4].pocetak + igrac[player_counter % 4].getProlazak(odabrani) + dice > 48)
+                            broj_na_kockici++;
+                        //dodaj pomak broju prijeđenih polja
+                        igrac[player_counter % 4].addProlazak(odabrani, broj_na_kockici);
+
+                        //Provjeri je li igrač pobjedio (jesu li svi pijuni u kučici)
+                        bool pobjedio = true;
+                        for (int i = 0; i < 4; i++)
+                            if (igrac[player_counter % 4].getProlazak(i) <= 49)
+                                pobjedio = false;
+                        //ako je pobjedio obavijesti o pobjedi
+                        if (pobjedio)
+                        {
+                            MessageBoxResult result = MessageBox.Show(igrac[player_counter % 4].boja_hrv.ToUpper() + " je pobjedio!", "Pobjeda!");
+                            //zatvori komunikaciju
+                            Close_Sockets();
+                            Opis.Text = "";
                         }
-
-                    polje.Slika = putanja_empty; //isprazni polje na kojem se trenutno nalazi pijun
-                    novo_polje.Slika = igrac[player_counter % 4].putanja;   //postavi pijuna na iduće polje
-                    //ako je ovaj potez bio izlazak iz kučice, onda se pijun postavlja na prvo mjesto, bez obzira na to koji je broj bio na kockici
-                    if (igrac[player_counter % 4].getProlazak(odabrani) == 0)
-                        broj_na_kockici = 1;
-                    //ako je broj polja prelazio početno polje, povećaj broj koraka koliko se pijun pomaknuo
-                    if (igrac[player_counter % 4].pocetak + igrac[player_counter % 4].getProlazak(odabrani) <= 48 && igrac[player_counter % 4].pocetak + igrac[player_counter % 4].getProlazak(odabrani) + dice > 48)
-                        broj_na_kockici++;
-                    //dodaj pomak broju prijeđenih polja
-                    igrac[player_counter % 4].addProlazak(odabrani, broj_na_kockici);
-
-                    //Provjeri je li igrač pobjedio (jesu li svi pijuni u kučici)
-                    bool pobjedio = true;
-                    for (int i = 0; i < 4; i++)
-                        if (igrac[player_counter % 4].getProlazak(i) <= 49)
-                            pobjedio = false;
-                    //ako je pobjedio obavijesti o pobjedi
-                    if (pobjedio)
-                    {
-                        MessageBoxResult result = MessageBox.Show(igrac[player_counter % 4].boja_hrv.ToUpper() + " je pobjedio!", "Pobjeda!");
-                        //zatvori komunikaciju
-                        Close_Sockets();
                     }
                 }
-            }
 
-            //ako igrač nije dobio šesticu prijeđi na sljedećeg aktivnog igrača
-            //(igrač koji je dobio šesticu ima pravo ponovo igrati)
-            if (!sestica)
-            {
-                player_counter++;
-                while (!igrac[player_counter % 4].aktivan)
+                //ako igrač nije dobio šesticu prijeđi na sljedećeg aktivnog igrača
+                //(igrač koji je dobio šesticu ima pravo ponovo igrati)
+                if (!sestica)
+                {
                     player_counter++;
-            }
-            Opis.Text = "Ti si " + igrac[moj_broj].boja_hrv + "!\r\n"+" Igra " + igrac[player_counter%4].boja_hrv + "!";
-            if(igrac[player_counter%4].boja.Contains("Yellow"))
-                Opis.Foreground=Brushes.DarkGoldenrod;
-            else
-            {
-                SolidColorBrush color = (SolidColorBrush)new BrushConverter().ConvertFromString(igrac[player_counter%4].boja);
-                Opis.Foreground = color;
-            }
-            string putanja_kockice = "/Resources/Images/kockica/Kockica.png";
-            Kockica.Source = new BitmapImage(new Uri(putanja_kockice, UriKind.RelativeOrAbsolute));
+                    while (!igrac[player_counter % 4].aktivan)
+                        player_counter++;
+                }
+                Opis.Text = "Ti si " + igrac[moj_broj].boja_hrv + "!\r\n" + " Igra " + igrac[player_counter % 4].boja_hrv + "!";
+                if (igrac[player_counter % 4].boja.Contains("Yellow"))
+                    Opis.Foreground = Brushes.DarkGoldenrod;
+                else
+                {
+                    SolidColorBrush color = (SolidColorBrush)new BrushConverter().ConvertFromString(igrac[player_counter % 4].boja);
+                    Opis.Foreground = color;
+                }
+                string putanja_kockice = "/Resources/Images/kockica/Kockica.png";
+                Kockica.Source = new BitmapImage(new Uri(putanja_kockice, UriKind.RelativeOrAbsolute));
             }));
 
             //ako je njegov red omogući korisniku da klikne na kockicu
@@ -1134,8 +1205,9 @@ namespace CovjeceNeLjutiSe
                 byte[] buffer;
                 int rec;
                 buffer = Encoding.Default.GetBytes(dice.ToString());
-                try{
-                sck_c.Send(buffer, 0, buffer.Length, 0);
+                try
+                {
+                    sck_c.Send(buffer, 0, buffer.Length, 0);
                 }
                 catch
                 {
@@ -1143,8 +1215,9 @@ namespace CovjeceNeLjutiSe
                 }
                 //provjeri je li server primio poruku
                 buffer = new byte[255];
-                try{
-                rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
+                try
+                {
+                    rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
                 }
                 catch
                 {
@@ -1169,8 +1242,9 @@ namespace CovjeceNeLjutiSe
                     if (igrac[i].aktivan && i != (player_counter % 4) && i != moj_broj)
                     {
                         buffer = Encoding.Default.GetBytes(dice.ToString());
-                        try{
-                        acc[i].Send(buffer, 0, buffer.Length, 0);
+                        try
+                        {
+                            acc[i].Send(buffer, 0, buffer.Length, 0);
                         }
                         catch
                         {
@@ -1179,8 +1253,9 @@ namespace CovjeceNeLjutiSe
 
                         //provjeri je li korisnik primio poruku
                         buffer = new byte[255];
-                        try{
-                        rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
+                        try
+                        {
+                            rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
                         }
                         catch
                         {
@@ -1195,31 +1270,31 @@ namespace CovjeceNeLjutiSe
                     }
                 }
             }
-            
+
             for (int i = 0; i < 4; i++)
             {
-                int igram=player_counter%4; //trenutni igrač
+                int igram = player_counter % 4; //trenutni igrač
                 int prosao = igrac[igram].getProlazak(i);   //broj polja koliko je do sad igrač prošao
-                int fix = (igrac[igram].pocetak + prosao)/49;   //varijabla koja određuje je li igrač prešao početno polje (0 ako nije, broj polja koliko je prešao ako je)
+                int fix = (igrac[igram].pocetak + prosao) / 49;   //varijabla koja određuje je li igrač prešao početno polje (0 ako nije, broj polja koliko je prešao ako je)
                 if (prosao == 0)
                 {
                     //ako je pijun još u kučici
-                    name[i]=igrac[igram].boja+ "_Home_" + Convert.ToString(i + 1); //polje na kojem se trenutno nalazi je "Boja_Home_Broj"
+                    name[i] = igrac[igram].boja + "_Home_" + Convert.ToString(i + 1); //polje na kojem se trenutno nalazi je "Boja_Home_Broj"
                     //ako je igrač dobio broj 6 izlazi iz kučice
                     if (dice == 6)
                         new_name[i] = "Polje_" + Convert.ToString(igrac[igram].pocetak + 1); //iduće polje je polje njegovog početka
                     else
                         new_name[i] = "Skip_play"; //inače igrač preskače red
                 }
-                else if (prosao-fix > 48)
+                else if (prosao - fix > 48)
                 {
                     //ako je pijun u cilju
-                    name[i]=igrac[igram].boja + "_Finish_" + Convert.ToString(prosao- fix - 48); //polje na kojem se trenutno nalazi je "Boja_Finish_Broj"
+                    name[i] = igrac[igram].boja + "_Finish_" + Convert.ToString(prosao - fix - 48); //polje na kojem se trenutno nalazi je "Boja_Finish_Broj"
                     //ako je broj na kockici manji ili jednak broju polja u cilju koliko još ima ispred njega
-                    if(prosao-fix-48+dice<=4)
-                        new_name[i] = igrac[igram].boja + "_Finish_" + Convert.ToString(prosao-fix -48 + dice); //iduće polje je jedno od polja cilja
+                    if (prosao - fix - 48 + dice <= 4)
+                        new_name[i] = igrac[igram].boja + "_Finish_" + Convert.ToString(prosao - fix - 48 + dice); //iduće polje je jedno od polja cilja
                     else
-                        new_name[i]="OutOfRange"; //inače nema polja na koje možemo pomaknuti tog pijuna
+                        new_name[i] = "OutOfRange"; //inače nema polja na koje možemo pomaknuti tog pijuna
                 }
                 else
                 {
@@ -1237,7 +1312,7 @@ namespace CovjeceNeLjutiSe
                         if (igrac[igram].pocetak + prosao <= 48 && igrac[igram].pocetak + prosao + dice > 48)
                             smjesten++;
                         //Iduće polje je jedno od polja za igru
-                        new_name [i]= "Polje_" + Convert.ToString(smjesten);
+                        new_name[i] = "Polje_" + Convert.ToString(smjesten);
                     }
                     //ako pijun nakon dodavanja broja na kockici ide u cilj
                     else if (prosao - fix + dice <= 48 + 4)
@@ -1254,7 +1329,7 @@ namespace CovjeceNeLjutiSe
                 if (obj != null)
                 {
                     var polje = obj as field;
-                    polje.MouseDown+=new MouseButtonEventHandler(polje_MouseDown);
+                    polje.MouseDown += new MouseButtonEventHandler(polje_MouseDown);
                 }
             }
         }
@@ -1263,24 +1338,24 @@ namespace CovjeceNeLjutiSe
         {
             //korisnik je odabrao pomicanje jednog od pijuna
             bool sestica = (dice == 6); //flag koji provjerava je li broj na kockici jednak 6
-            var polje=sender as field;
+            var polje = sender as field;
             //provjeri je li polje na koje je korisnik kliknuo jedno od mogućih polja na koja je korisniku dopušteno kliknuti
             int odabrani = -1;
             for (int i = 0; i < 4; i++)
-                if (polje.Name.Contains(name[i]))
+                if (polje.Name.Equals(name[i]))
                     odabrani = i;
             if (odabrani == -1)
                 return;
             //provjeri postoji li pijun na kojeg korisnik može kliknuti i pomaknuti ga
             bool postoje_potezi = false;
-            for(int i=0;i<4;i++)
+            for (int i = 0; i < 4; i++)
             {
                 object obj = FindName(new_name[i]);
-                if(obj!=null)   //rezultat je null ako je new_name "Skip_play" ili "OutOfRange" jer polja s tim imenom ne postoje
+                if (obj != null)   //rezultat je null ako je new_name "Skip_play" ili "OutOfRange" jer polja s tim imenom ne postoje
                 {
-                    var polje2= obj as field;
-                    if(polje2.Slika.Contains(igrac[player_counter%4].putanja)==false)   //ako na idućem polju već ne stoji pijun istog igrača
-                        postoje_potezi=true;    
+                    var polje2 = obj as field;
+                    if (polje2.Slika.Contains(igrac[player_counter % 4].putanja) == false)   //ako na idućem polju već ne stoji pijun istog igrača
+                        postoje_potezi = true;
                 }
             }
             if (postoje_potezi)
@@ -1294,7 +1369,7 @@ namespace CovjeceNeLjutiSe
                 {
                     var novo_polje = obj as field;
                     //ako se na idućem polju nalazi pijun istog igrača izađi iz funkcije i pusti igrača da odabere drugi pijun
-                    if (novo_polje.Slika.Contains(igrac[player_counter % 4].putanja))  
+                    if (novo_polje.Slika.Contains(igrac[player_counter % 4].putanja))
                     {
                         return;
                     }
@@ -1303,12 +1378,12 @@ namespace CovjeceNeLjutiSe
                     //pogledaj nalazi se na odabranom polju pijun nekog drugog igrača
                     for (int i = 0; i < 4; i++) //za svakog igrača
                         //ako to nije trenutni igrač i ako na novom polju postoji pijun tog igrača
-                        if (i != (player_counter%4) && novo_polje.Slika.Contains(igrac[i].putanja)) 
+                        if (i != (player_counter % 4) && novo_polje.Slika.Contains(igrac[i].putanja))
                         {
                             //za svaki od pijuna tog igrača
                             for (int j = 0; j < 4; j++)
                             {
-                                string name="Polje_" + Convert.ToString((igrac[i].pocetak + igrac[i].getProlazak(j))%49);
+                                string name = "Polje_" + Convert.ToString((igrac[i].pocetak + igrac[i].getProlazak(j)) % 49);
                                 //provjeri nalazi li se taj pijun na novom polju trenutnog igrača
                                 if (novo_polje.Name.Contains(name))
                                 {
@@ -1325,7 +1400,7 @@ namespace CovjeceNeLjutiSe
                     polje.Slika = putanja_empty; //isprazni polje na kojem se trenutno nalazi pijun
                     novo_polje.Slika = igrac[player_counter % 4].putanja;   //postavi pijuna na iduće polje
                     //ako je ovaj potez bio izlazak iz kučice, onda se pijun postavlja na prvo mjesto, bez obzira na to koji je broj bio na kockici
-                    if (igrac[player_counter % 4].getProlazak(odabrani) == 0)   
+                    if (igrac[player_counter % 4].getProlazak(odabrani) == 0)
                         dice = 1;
                     //ako je broj polja prelazio početno polje, povećaj broj koraka koliko se pijun pomaknuo
                     if (igrac[player_counter % 4].pocetak + igrac[player_counter % 4].getProlazak(odabrani) <= 48 && igrac[player_counter % 4].pocetak + igrac[player_counter % 4].getProlazak(odabrani) + dice > 48)
@@ -1350,8 +1425,9 @@ namespace CovjeceNeLjutiSe
                     {
                         //pošalji korisnicima koje je trenutno polje
                         buffer = Encoding.Default.GetBytes(name[odabrani]);
-                        try{
-                        acc[i].Send(buffer, 0, buffer.Length, 0);
+                        try
+                        {
+                            acc[i].Send(buffer, 0, buffer.Length, 0);
                         }
                         catch
                         {
@@ -1360,8 +1436,9 @@ namespace CovjeceNeLjutiSe
 
                         //provjeri je li korisnik primio poruku
                         buffer = new byte[255];
-                        try{
-                        rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
+                        try
+                        {
+                            rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
                         }
                         catch
                         {
@@ -1378,8 +1455,9 @@ namespace CovjeceNeLjutiSe
                         if (igrac[i].aktivan && i != (player_counter % 4) && i != moj_broj)
                         {
                             buffer = Encoding.Default.GetBytes(new_name[odabrani]);
-                            try{
-                            acc[i].Send(buffer, 0, buffer.Length, 0);
+                            try
+                            {
+                                acc[i].Send(buffer, 0, buffer.Length, 0);
                             }
                             catch
                             {
@@ -1388,8 +1466,9 @@ namespace CovjeceNeLjutiSe
 
                             //provjeri je li korisnik primio poruku
                             buffer = new byte[255];
-                            try{
-                            rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
+                            try
+                            {
+                                rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
                             }
                             catch
                             {
@@ -1405,8 +1484,9 @@ namespace CovjeceNeLjutiSe
 
                         //posalji korisnicima koji je pijun odabran
                         buffer = Encoding.Default.GetBytes(odabrani.ToString());
-                        try{
-                        acc[i].Send(buffer, 0, buffer.Length, 0);
+                        try
+                        {
+                            acc[i].Send(buffer, 0, buffer.Length, 0);
                         }
                         catch
                         {
@@ -1415,8 +1495,9 @@ namespace CovjeceNeLjutiSe
 
                         //provjeri je li korisnik primio poruku
                         buffer = new byte[255];
-                        try{
-                        rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
+                        try
+                        {
+                            rec = acc[i].Receive(buffer, 0, buffer.Length, 0);
                         }
                         catch
                         {
@@ -1438,8 +1519,9 @@ namespace CovjeceNeLjutiSe
 
                 //posalji serveru trenutno polje
                 buffer = Encoding.Default.GetBytes(name[odabrani]);
-                try{
-                sck_c.Send(buffer, 0, buffer.Length, 0);
+                try
+                {
+                    sck_c.Send(buffer, 0, buffer.Length, 0);
                 }
                 catch
                 {
@@ -1448,8 +1530,9 @@ namespace CovjeceNeLjutiSe
 
                 //provjeri je li server primio poruku
                 buffer = new byte[255];
-                try{
-                rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
+                try
+                {
+                    rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
                 }
                 catch
                 {
@@ -1464,8 +1547,9 @@ namespace CovjeceNeLjutiSe
 
                 //posalji serveru iduće polje
                 buffer = Encoding.Default.GetBytes(new_name[odabrani]);
-                try{
-                sck_c.Send(buffer, 0, buffer.Length, 0);
+                try
+                {
+                    sck_c.Send(buffer, 0, buffer.Length, 0);
                 }
                 catch
                 {
@@ -1474,8 +1558,9 @@ namespace CovjeceNeLjutiSe
 
                 //provjeri je li server primio poruku
                 buffer = new byte[255];
-                try{
-                rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
+                try
+                {
+                    rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
                 }
                 catch
                 {
@@ -1490,8 +1575,9 @@ namespace CovjeceNeLjutiSe
 
                 //posalji serveru koji je pijun odabran
                 buffer = Encoding.Default.GetBytes(odabrani.ToString());
-                try{
-                sck_c.Send(buffer, 0, buffer.Length, 0);
+                try
+                {
+                    sck_c.Send(buffer, 0, buffer.Length, 0);
                 }
                 catch
                 {
@@ -1500,8 +1586,9 @@ namespace CovjeceNeLjutiSe
 
                 //provjeri je li server primio poruku
                 buffer = new byte[255];
-                try{
-                rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
+                try
+                {
+                    rec = sck_c.Receive(buffer, 0, buffer.Length, 0);
                 }
                 catch
                 {
@@ -1525,7 +1612,7 @@ namespace CovjeceNeLjutiSe
                 }
             }
             //Provjeri je li igrač pobjedio (jesu li svi pijuni u kučici)
-            bool pobjedio=true;
+            bool pobjedio = true;
             for (int i = 0; i < 4; i++)
                 if (igrac[player_counter % 4].getProlazak(i) <= 49)
                     pobjedio = false;
@@ -1535,6 +1622,7 @@ namespace CovjeceNeLjutiSe
                 MessageBoxResult result = MessageBox.Show(igrac[player_counter % 4].boja_hrv.ToUpper() + " je pobjedio!", "Pobjeda!");
                 //zatvori komunikaciju
                 Close_Sockets();
+                Opis.Text = "";
             }
             //ako igrač nije dobio šesticu prijeđi na sljedećeg aktivnog igrača
             //(igrač koji je dobio šesticu ima pravo ponovo igrati)
@@ -1545,15 +1633,15 @@ namespace CovjeceNeLjutiSe
                     player_counter++;
             }
 
-            if(Server||Klijent)
-                Opis.Text = "Ti si " + igrac[moj_broj].boja_hrv + "!\r\n"+" Igra " + igrac[player_counter%4].boja_hrv + "!";
+            if (Server || Klijent)
+                Opis.Text = "Ti si " + igrac[moj_broj].boja_hrv + "!\r\n" + " Igra " + igrac[player_counter % 4].boja_hrv + "!";
             else
                 Opis.Text = " Igra " + igrac[player_counter % 4].boja_hrv + "!";
-            if(igrac[player_counter%4].boja.Contains("Yellow"))
-                Opis.Foreground=Brushes.DarkGoldenrod;
+            if (igrac[player_counter % 4].boja.Contains("Yellow"))
+                Opis.Foreground = Brushes.DarkGoldenrod;
             else
             {
-                SolidColorBrush color = (SolidColorBrush)new BrushConverter().ConvertFromString(igrac[player_counter%4].boja);
+                SolidColorBrush color = (SolidColorBrush)new BrushConverter().ConvertFromString(igrac[player_counter % 4].boja);
                 Opis.Foreground = color;
             }
             //omogući klik na kockicu
@@ -1584,5 +1672,3 @@ namespace CovjeceNeLjutiSe
         }
     }
 }
-
-
